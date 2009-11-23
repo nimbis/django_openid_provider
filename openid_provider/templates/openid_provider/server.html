@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block extrahead %}{{ block.super }}
+<meta http-equiv="x-xrds-location" content="{{ host }}{% url openid-provider-xrds %}">
+{% endblock %}
+
+{% block content %}
+This is an OpenID server.
+{% endblock %}

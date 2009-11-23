@@ -1,0 +1,3 @@
+- "one time" access decision (without storing trust_root in database),
+- trusted_roots management,
+- sreg support.
