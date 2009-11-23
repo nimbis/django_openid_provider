@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim: set ts=4 sw=4 fdm=indent : */
 # some code from http://www.djangosnippets.org/snippets/310/ by simon
+# and from examples/djopenid from python-openid-2.2.4
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -49,9 +50,12 @@ def openid_server(req):
 	"""
 	host = get_base_uri(req)
 	try:
+		# if we have django_openid_auth in applications directory
+		# then we can use DjangoOpenIDStore
 		from django_openid_auth.store import DjangoOpenIDStore
 		store = DjangoOpenIDStore()
 	except:
+		# otherwise use FileOpenIDStore
 		OPENID_FILESTORE = '/tmp/openid-filestore'
 		from openid.store.filestore import FileOpenIDStore
 		store = FileOpenIDStore(OPENID_FILESTORE)
@@ -83,7 +87,8 @@ def openid_server(req):
 		openid = openid_is_authorized(req, orequest.identity, orequest.trust_root)
 
 		if openid is not None:
-			oresponse = orequest.answer(True, identity="%s%s" % (host, reverse('openid-provider-identity', args=[openid.openid])))
+			oresponse = orequest.answer(True, identity="%s%s" % (
+				host, reverse('openid-provider-identity', args=[openid.openid])))
 		elif orequest.immediate:
 			raise Exception('checkid_immediate mode not supported')
 		else:
@@ -196,12 +201,3 @@ def openid_is_authorized(req, identity_url, trust_root):
 		return None
 
 	return openid
-
-"""
-def openid_cancel(request):
-	"Called when the user cancels a pending OpenID auth request"
-	if request.session.get('AuthorizationInfo', None):
-		del request.session['AuthorizationInfo']
-	return HttpResponseRedirect(request.GET.get('n', '/'))
-"""
-
