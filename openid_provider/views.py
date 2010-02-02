@@ -99,24 +99,24 @@ def openid_server(req):
 	webresponse = server.encodeResponse(oresponse)
 	return django_response(webresponse)
 
-def openid_xrds(req):
+def openid_xrds(req, identity=False, id=None):
 	from openid.yadis.constants import YADIS_CONTENT_TYPE
-	from openid.consumer.discover import OPENID_IDP_2_0_TYPE
+	from openid.consumer.discover import OPENID_IDP_2_0_TYPE, OPENID_2_0_TYPE
+
+	if identity:
+		types = [OPENID_2_0_TYPE]
+	else:
+		types = [OPENID_IDP_2_0_TYPE]
 
 	response = render_to_response('openid_provider/xrds.xml',
 			{
 				'host': get_base_uri(req),
-				'types': [OPENID_IDP_2_0_TYPE],
+				'types': types,
 				'endpoints': [reverse('openid-provider-root')]
 			},
 			context_instance=RequestContext(req))
 	response['Content-Type'] = YADIS_CONTENT_TYPE
 	return response
-
-def openid_identity(req, *args):
-	return render_to_response('openid_provider/identity.html',
-		{'host': get_base_uri(req),},
-		context_instance=RequestContext(req))
 
 def openid_decide(req):
 	"""
