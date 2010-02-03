@@ -2,9 +2,19 @@
 Changes
 =======
 
+0.2
+---
+Released 2010-02-03.
+
+* Better support for multiple identities - you can select one as default (if none identity is claimed in request).
+* Added checking of claimed identity ownership.
+* Added documentation.
+
 0.1
 ---
-2009-11-23 Initial version.
+Released 2009-11-23.
+
+* Initial version.
 
 
 =======
