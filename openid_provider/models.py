@@ -8,10 +8,12 @@ from django.db import models
 class OpenID(models.Model):
 	user = models.ForeignKey(User)
 	openid = models.CharField(max_length=200, blank=True, unique=True)
+	default = models.BooleanField(default=False)
 
 	class Meta:
 		verbose_name = _('OpenID')
 		verbose_name_plural = _('OpenIDs')
+		ordering = ['openid']
 
 	def __unicode__(self):
 		return u"%s|%s" % (self.user.username, self.openid)
@@ -27,6 +29,8 @@ class OpenID(models.Model):
 			value = value.replace('/', '').replace('+', '').replace('=', '')
 			self.openid = value
 		super(OpenID, self).save(*args, **kwargs)
+		if self.default:
+			self.user.openid_set.exclude(pk=self.pk).update(default=False)
 
 class TrustedRoot(models.Model):
 	openid = models.ForeignKey(OpenID)

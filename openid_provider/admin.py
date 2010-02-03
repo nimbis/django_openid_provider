@@ -10,6 +10,6 @@ class TrustedRootInline(admin.TabularInline):
 	model = TrustedRoot
 
 class OpenIDAdmin(admin.ModelAdmin):
-	list_display = ['user', 'openid']
+	list_display = ['openid', 'user', 'default']
 	inlines = [TrustedRootInline, ]
 admin.site.register(OpenID, OpenIDAdmin)

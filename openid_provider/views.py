@@ -133,9 +133,9 @@ def openid_decide(req):
 
 	if not req.user.is_authenticated():
 		return landing_page(req, orequest)
-	try:
-		openid = req.user.openid_set.all()[0]
-	except IndexError, ObjectDoesNotExist:
+
+	openid = openid_get_identity(req, orequest.identity)
+	if openid is None:
 		return error_page(req, "You are signed in but you don't have OpenID here!")
 
 	if req.method == 'POST' and req.POST.get('decide_page', False):
@@ -192,12 +192,35 @@ def openid_is_authorized(req, identity_url, trust_root):
 	if not req.user.is_authenticated():
 		return None
 
-	try:
-		openid = req.user.openid_set.all()[0]
-	except IndexError, ObjectDoesNotExist:
+	openid = openid_get_identity(req, identity_url)
+	if openid is None:
 		return None
+
+	import logging
+	LOG_FILENAME = '/tmp/openid.log'
+	logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+	logging.debug("%s %s" % (identity_url, openid.openid))
 
 	if openid.trustedroot_set.filter(trust_root=trust_root).count() < 1:
 		return None
 
 	return openid
+
+def openid_get_identity(req, identity_url):
+	""" Select openid based on claim (identity_url).
+	If none was claimed identity_url will be 'http://specs.openid.net/auth/2.0/identifier_select'
+	- in that case return default one
+	- if user has no default one, return any
+	- in other case return None!
+	"""
+	host = get_base_uri(req)
+	for openid in req.user.openid_set.iterator():
+		if identity_url == ("%s%s" % (host, reverse('openid-provider-identity', args=[openid.openid]))):
+			return openid
+	if identity_url == 'http://specs.openid.net/auth/2.0/identifier_select':
+		# no claim was made, choose user default openid:
+		openids = req.user.openid_set.filter(default=True)
+		if openids.count() == 1:
+			return openids[0]
+		return req.user.openid_set.all()[0]
+	return None
