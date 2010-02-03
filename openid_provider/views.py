@@ -196,11 +196,6 @@ def openid_is_authorized(req, identity_url, trust_root):
 	if openid is None:
 		return None
 
-	import logging
-	LOG_FILENAME = '/tmp/openid.log'
-	logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
-	logging.debug("%s %s" % (identity_url, openid.openid))
-
 	if openid.trustedroot_set.filter(trust_root=trust_root).count() < 1:
 		return None
 
