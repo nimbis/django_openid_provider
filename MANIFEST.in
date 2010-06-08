@@ -1,0 +1,2 @@
+include setup.py README.txt MANIFEST.in
+recursive-include openid_provider/templates *
