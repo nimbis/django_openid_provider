@@ -27,3 +27,13 @@ Django OpenID Provider is developed by Roman Barczyński based on code from:
 - python-openid-2.2.4 examples/djopenid
 
 .. _`django code snippets`: http://www.djangosnippets.org/snippets/310/
+
+
+Contributors
+------------
+
+`Bruno Renié`_
+
+* initial setup.py and MANIFEST.in
+
+.. _`Bruno Renié`: http://bitbucket.org/bruno
