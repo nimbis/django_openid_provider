@@ -1,4 +1,4 @@
-Django OpenID Provider v0.2 documentation
+Django OpenID Provider v0.3 documentation
 ===============================================
 ..  toctree::
     :maxdepth: 2

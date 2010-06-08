@@ -33,7 +33,8 @@ Basic Installation
 4. Run::
 
     python manage.py syncdb
-to create required tables to your database.
+
+   to create required tables to your database.
 
 
 ====================
