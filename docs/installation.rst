@@ -4,8 +4,9 @@ Requirements
 
 Python OpenID library is required to run `openid_provider`.
 
-Optional you can add django_openid_auth_ for its `DjangoOpenIDStore` - otherwise `openid_provider`
-will use FileOpenIDStore which is less secure in shared hosting environments.
+Optional you can add django_openid_auth_ for its `DjangoOpenIDStore`
+- otherwise `openid_provider` will use FileOpenIDStore which is less secure
+in shared hosting environments.
 
 .. _django_openid_auth: https://launchpad.net/django-openid-auth
 
@@ -15,7 +16,8 @@ Basic Installation
 ==================
 
 1. Copy ``openid_provider`` into your project directory (or link to it).
-2. Add ``'openid_provider'`` to ``INSTALLED_APPS``, openid_provider requre at least::
+2. Add ``'openid_provider'`` to ``INSTALLED_APPS``, openid_provider
+   requre at least::
 
     'django.contrib.auth',
     'django.contrib.sessions',
@@ -32,4 +34,35 @@ Basic Installation
 
     python manage.py syncdb
 to create required tables to your database.
+
+
+====================
+What is not provided
+====================
+
+This application does not include most basic template every django project
+should have: ``base.html``. You should have ``base.html`` file in one of your
+`settings.TEMPLATE_DIRS`_ directories and it should contain 3 base blocks:
+
+  - title,
+  - extrahead,
+  - content
+
+(see DosAndDontsForApplicationWriters_ and `django template inheritance`_)
+
+.. _`settings.TEMPLATE_DIRS`:
+   http://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
+.. _DosAndDontsForApplicationWriters:
+   http://code.djangoproject.com/wiki/DosAndDontsForApplicationWriters
+.. _`django template inheritance`:
+   http://docs.djangoproject.com/en/dev/topics/templates/#id1
+
+If your base template is named differently you should override
+``openid_provider/base.html`` to contain something like::
+
+    {% extends "your_base_template_name.html" %}
+
+If your base template have different blocks you could easily remap those::
+
+    {% block your_content_block_name %}{% block content %}{% endblock %}{% endblock %}
 

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "openid_provider/base.html" %}
 
 {% block extrahead %}{{ block.super }}
 <meta http-equiv="x-xrds-location" content="{{ host }}{% url openid-provider-xrds %}">

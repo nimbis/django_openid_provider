@@ -2,6 +2,13 @@
 History
 =======
 
+v0.3
+----
+Released 2010-06-08.
+
+* Better Djangos DosAndDontsForApplicationWriters compliance.
+* Added MANIFEST.in and setup.py (thx Bruno).
+
 v0.2
 ----
 Released 2010-02-03.
