@@ -19,7 +19,7 @@ from openid.server.trustroot import verifyReturnTo
 from openid.yadis.discover import DiscoveryFailure
 from openid.yadis.constants import YADIS_CONTENT_TYPE
 
-from openid_provider.utils import get_base_uri
+from openid_provider.utils import get_base_uri, add_sreg_data
 
 
 def openid_server(request):
@@ -75,6 +75,7 @@ def openid_server(request):
             return HttpResponseRedirect(reverse('openid-provider-decide'))
     else:
         oresponse = server.handleRequest(orequest)
+    add_sreg_data(request, orequest, oresponse)
     # Convert a webresponse from the OpenID library in to a Django HttpResponse
     webresponse = server.encodeResponse(oresponse)
     response = HttpResponse(webresponse.body)
