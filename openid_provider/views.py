@@ -20,7 +20,7 @@ from openid.server.trustroot import verifyReturnTo
 from openid.yadis.discover import DiscoveryFailure
 from openid.yadis.constants import YADIS_CONTENT_TYPE
 
-from openid_provider.utils import get_base_uri, add_sreg_data
+from openid_provider.utils import add_sreg_data
 
 @csrf_exempt
 def openid_server(request):
@@ -28,7 +28,6 @@ def openid_server(request):
     This view is the actual OpenID server - running at the URL pointed to by 
     the <link rel="openid.server"> tag. 
     """
-    host = get_base_uri(request)
     try:
         # if we have django_openid_auth in applications directory
         # then we can use DjangoOpenIDStore
@@ -40,7 +39,8 @@ def openid_server(request):
         from openid.store.filestore import FileOpenIDStore
         store = FileOpenIDStore(OPENID_FILESTORE)
 
-    server = Server(store, op_endpoint="%s%s" % (host, reverse('openid-provider-root')))
+    server = Server(store, op_endpoint=request.build_absolute_uri(
+        reverse('openid-provider-root')))
 
     # Clear AuthorizationInfo session var, if it is set
     if request.session.get('AuthorizationInfo', None):
@@ -50,25 +50,27 @@ def openid_server(request):
     orequest = server.decodeRequest(querydict)
     if not orequest:
         orequest = request.session.get('OPENID_REQUEST', None)
-        if not orequest:
-            # not request, render info page:
-            return render_to_response('openid_provider/server.html', {
-                'host': host,
-            }, context_instance=RequestContext(request))
-        else:
+        if orequest:
             # remove session stored data:
             del request.session['OPENID_REQUEST']
+        else:
+            # not request, render info page:
+            return render_to_response('openid_provider/server.html', {
+                'host': request.build_absolute_uri('/'),
+                'xrds_location': request.build_absolute_uri(
+                    reverse('openid-provider-xrds')),
+            }, context_instance=RequestContext(request))
 
     if orequest.mode in ("checkid_immediate", "checkid_setup"):
-
         if not request.user.is_authenticated():
             return landing_page(request, orequest)
 
         openid = openid_is_authorized(request, orequest.identity, orequest.trust_root)
 
         if openid is not None:
-            oresponse = orequest.answer(True, identity="%s%s" % (
-                host, reverse('openid-provider-identity', args=[openid.openid])))
+            id_url = request.build_absolute_uri(
+                reverse('openid-provider-identity', args=[openid.openid]))
+            oresponse = orequest.answer(True, identity=id_url)
         elif orequest.immediate:
             raise Exception('checkid_immediate mode not supported')
         else:
@@ -76,7 +78,8 @@ def openid_server(request):
             return HttpResponseRedirect(reverse('openid-provider-decide'))
     else:
         oresponse = server.handleRequest(orequest)
-    add_sreg_data(request, orequest, oresponse)
+    if request.user.is_authenticated():
+        add_sreg_data(request, orequest, oresponse)
     # Convert a webresponse from the OpenID library in to a Django HttpResponse
     webresponse = server.encodeResponse(oresponse)
     response = HttpResponse(webresponse.body)
@@ -86,16 +89,15 @@ def openid_server(request):
     return response
 
 def openid_xrds(request, identity=False, id=None):
-
     if identity:
         types = [OPENID_2_0_TYPE]
     else:
         types = [OPENID_IDP_2_0_TYPE]
-
+    endpoints = [request.build_absolute_uri(reverse('openid-provider-root'))]
     return render_to_response('openid_provider/xrds.xml', {
-        'host': get_base_uri(request),
+        'host': request.build_absolute_uri('/'),
         'types': types,
-        'endpoints': [reverse('openid-provider-root')]
+        'endpoints': endpoints,
     }, context_instance=RequestContext(request), mimetype=YADIS_CONTENT_TYPE)
 
 def openid_decide(request):
@@ -120,7 +122,7 @@ def openid_decide(request):
 
     # verify return_to of trust_root
     try:
-        trust_root_valid = verifyReturnTo(orequest.trust_root, orequest.return_to ) and "Valid" or "Invalid"
+        trust_root_valid = verifyReturnTo(orequest.trust_root, orequest.return_to) and "Valid" or "Invalid"
     except HTTPFetchingError:
         trust_root_valid = "Unreachable"
     except DiscoveryFailure:
@@ -176,9 +178,9 @@ def openid_get_identity(request, identity_url):
     - if user has no default one, return any
     - in other case return None!
     """
-    host = get_base_uri(request)
     for openid in request.user.openid_set.iterator():
-        if identity_url == ("%s%s" % (host, reverse('openid-provider-identity', args=[openid.openid]))):
+        if identity_url == request.build_absolute_uri(
+                reverse('openid-provider-identity', args=[openid.openid])):
             return openid
     if identity_url == 'http://specs.openid.net/auth/2.0/identifier_select':
         # no claim was made, choose user default openid:
