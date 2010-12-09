@@ -32,7 +32,7 @@
 
 <!-- trust_root_valid is {{ trust_root_valid }} -->
 
-<form method="post" action="{% url openid-provider-decide %}">
+<form method="post" action="{% url openid-provider-decide %}">{% csrf_token %}
 Verify your identity to the relying party?
 <br/>
 <input type="hidden" name="decide_page" value="True" />
