@@ -9,6 +9,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
 
@@ -21,7 +22,7 @@ from openid.yadis.constants import YADIS_CONTENT_TYPE
 
 from openid_provider.utils import get_base_uri, add_sreg_data
 
-
+@csrf_exempt
 def openid_server(request):
     """
     This view is the actual OpenID server - running at the URL pointed to by 
