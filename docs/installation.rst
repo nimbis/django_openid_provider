@@ -2,11 +2,22 @@
 Requirements
 ============
 
-Python OpenID library is required to run `openid_provider`.
+The Python OpenID library is required to run ``openid_provider``. By default
+it'll use ``openid.store.filestore.FileOpenIDStore`` for persistent storage
+of OpenID related data.
 
-Optional you can add django_openid_auth_ for its `DjangoOpenIDStore`
-- otherwise `openid_provider` will use FileOpenIDStore which is less secure
-in shared hosting environments.
+To change the file system location that the default storage uses, you can
+optionally provide a ``OPENID_PROVIDER_FILESTORE_PATH`` setting.
+
+In case you don't want to store the OpenID related data on a file system,
+it's also possible to make use of the ``DjangoOpenIDStore`` contained in
+the django_openid_auth_ app. Simply add an ``OPENID_PROVIDER_STORE`` setting
+to your settings::
+
+    OPENID_PROVIDER_STORE = 'django_openid_auth.store.DjangoOpenIDStore'
+
+This is especially useful in case your site is deployed in shared hosting
+environments.
 
 .. _django_openid_auth: https://launchpad.net/django-openid-auth
 
@@ -15,19 +26,23 @@ in shared hosting environments.
 Basic Installation
 ==================
 
-1. Copy ``openid_provider`` into your project directory (or link to it).
-2. Add ``'openid_provider'`` to ``INSTALLED_APPS``, openid_provider
-   requre at least::
+1. Copy/install ``openid_provider`` into your project directory (or link to it).
+2. Add ``'openid_provider'`` to ``INSTALLED_APPS`` and its dependencies::
 
-    'django.contrib.auth',
-    'django.contrib.sessions',
-    'openid_provider',
+    INSTALLED_APPS = (
+        # ...
+        'django.contrib.auth',
+        'django.contrib.sessions',
+        'openid_provider',
+        # ...
+    )
+
 3. Add ``openid_provider/urls.py`` to your urlpatterns, e.g.::
 
     urlpatterns = patterns('',
-        ...
+        # ...
         url(r'^openid/', include('openid_provider.urls')),
-        ...
+        # ...
     )
 
 4. Run::
@@ -45,8 +60,8 @@ This application does not include most basic template every django project
 should have: ``base.html``. You should have ``base.html`` file in one of your
 `settings.TEMPLATE_DIRS`_ directories and it should contain 3 base blocks:
 
-  - title,
-  - extrahead,
+  - title
+  - extrahead
   - content
 
 (see DosAndDontsForApplicationWriters_ and `django template inheritance`_)

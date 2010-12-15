@@ -20,7 +20,7 @@ from openid.server.trustroot import verifyReturnTo
 from openid.yadis.discover import DiscoveryFailure
 from openid.yadis.constants import YADIS_CONTENT_TYPE
 
-from openid_provider.utils import add_sreg_data
+from openid_provider.utils import add_sreg_data, get_store
 
 @csrf_exempt
 def openid_server(request):
@@ -28,19 +28,8 @@ def openid_server(request):
     This view is the actual OpenID server - running at the URL pointed to by 
     the <link rel="openid.server"> tag. 
     """
-    try:
-        # if we have django_openid_auth in applications directory
-        # then we can use DjangoOpenIDStore
-        from django_openid_auth.store import DjangoOpenIDStore
-        store = DjangoOpenIDStore()
-    except ImportError:
-        # otherwise use FileOpenIDStore
-        OPENID_FILESTORE = '/tmp/openid-filestore'
-        from openid.store.filestore import FileOpenIDStore
-        store = FileOpenIDStore(OPENID_FILESTORE)
-
-    server = Server(store, op_endpoint=request.build_absolute_uri(
-        reverse('openid-provider-root')))
+    server = Server(get_store(request),
+        op_endpoint=request.build_absolute_uri(reverse('openid-provider-root')))
 
     # Clear AuthorizationInfo session var, if it is set
     if request.session.get('AuthorizationInfo', None):
