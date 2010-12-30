@@ -2,6 +2,13 @@
 History
 =======
 
+v0.4
+----
+Released 2010-12-30.
+
+* CSRF enabled sites support (thx to Jannis).
+* SREG support (thx to Jannis).
+
 v0.3
 ----
 Released 2010-06-08.
