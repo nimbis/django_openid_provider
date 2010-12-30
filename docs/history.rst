@@ -43,7 +43,7 @@ Contributors
 
 * initial setup.py and MANIFEST.in
 
-`Janis Leidel`_
+`Jannis Leidel`_
 
 * code cleanup (tab2spaces, PEP8),
 * sreg support,
@@ -52,4 +52,4 @@ Contributors
 * ability to specify OPENID_PROVIDER_STORE in settings.
 
 .. _`Bruno Renié`: http://bitbucket.org/bruno
-.. _`Janis Leidel`: http://bitbucket.org/jezdez
+.. _`Jannis Leidel`: http://bitbucket.org/jezdez
