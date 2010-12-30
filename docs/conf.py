@@ -11,7 +11,7 @@ master_doc = 'index'
 project = 'Django OpenID Provider'
 _author = u"Roman Barczyński"
 copyright = u"2010, %s" % _author
-release = 'v0.3'
+release = 'v0.4'
 
 pygments_style = 'sphinx'
 
