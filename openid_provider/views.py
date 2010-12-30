@@ -9,7 +9,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
-from django.views.decorators.csrf import csrf_exempt
+try:
+	from django.views.decorators.csrf import csrf_exempt
+except ImportError:
+	from django.contrib.csrf.middleware import csrf_exempt
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
 

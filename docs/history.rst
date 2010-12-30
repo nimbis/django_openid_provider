@@ -47,7 +47,7 @@ Contributors
 
 * code cleanup (tab2spaces, PEP8),
 * sreg support,
-* CRSF exempt for openid_server,
+* CSRF exempt for openid_server,
 * simplified host resolution,
 * ability to specify OPENID_PROVIDER_STORE in settings.
 
