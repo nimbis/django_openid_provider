@@ -43,4 +43,13 @@ Contributors
 
 * initial setup.py and MANIFEST.in
 
+`Janis Leidel`_
+
+* code cleanup (tab2spaces, PEP8),
+* sreg support,
+* CRSF exempt for openid_server,
+* simplified host resolution,
+* ability to specify OPENID_PROVIDER_STORE in settings.
+
 .. _`Bruno Renié`: http://bitbucket.org/bruno
+.. _`Janis Leidel`: http://bitbucket.org/jezdez
