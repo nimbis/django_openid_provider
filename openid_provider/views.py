@@ -180,5 +180,6 @@ def openid_get_identity(request, identity_url):
         openids = request.user.openid_set.filter(default=True)
         if openids.count() == 1:
             return openids[0]
-        return request.user.openid_set.all()[0]
+        if request.user.openid_set.count() > 0:
+            return request.user.openid_set.all()[0]
     return None
