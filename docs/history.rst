@@ -2,6 +2,13 @@
 History
 =======
 
+tip
+---
+
+* Fixed landing page view to handle redirect URL GET params correctly.
+* Added setting OPENID_SREG_DATA_CALLBACK setting for custom SREG callback
+  functions.
+
 v0.4
 ----
 Released 2010-12-30.
