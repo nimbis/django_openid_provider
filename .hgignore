@@ -4,3 +4,4 @@ syntax:glob
 *~
 docs/.build
 docs/.templates
+*.egg-info
