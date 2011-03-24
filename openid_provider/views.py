@@ -2,18 +2,21 @@
 # vim: set ts=4 sw=4 fdm=indent : */
 # some code from http://www.djangosnippets.org/snippets/310/ by simon
 # and from examples/djopenid from python-openid-2.2.4
+import urlparse
+from urllib import urlencode, quote
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, QueryDict
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
-from django.utils.http import urlquote
+
+from django.utils.encoding import smart_str
 try:
-	from django.views.decorators.csrf import csrf_exempt
+    from django.views.decorators.csrf import csrf_exempt
 except ImportError:
-	from django.contrib.csrf.middleware import csrf_exempt
+    from django.contrib.csrf.middleware import csrf_exempt
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
 
@@ -134,17 +137,42 @@ def error_page(request, msg):
         'msg': msg,
     }, context_instance=RequestContext(request))
 
-def landing_page(request, orequest):
+class SafeQueryDict(QueryDict):
+    """
+    A custom QueryDict class that implements a urlencode method
+    knowing how to excempt some characters as safe.
+
+    Backported from Django 1.3
+    """
+    def urlencode(self, safe=None):
+        output = []
+        if safe:
+            encode = lambda k, v: '%s=%s' % ((quote(k, safe), quote(v, safe)))
+        else:
+            encode = lambda k, v: urlencode({k: v})
+        for k, list_ in self.lists():
+            k = smart_str(k, self.encoding)
+            output.extend([encode(k, smart_str(v, self.encoding))
+                           for v in list_])
+        return '&'.join(output)
+
+def landing_page(request, orequest, login_url=None,
+                 redirect_field_name=REDIRECT_FIELD_NAME):
     """
     The page shown when the user attempts to sign in somewhere using OpenID 
     but is not authenticated with the site. For idproxy.net, a message telling
     them to log in manually is displayed.
     """
     request.session['OPENID_REQUEST'] = orequest
-    login_url = settings.LOGIN_URL
+    if not login_url:
+        login_url = settings.LOGIN_URL
     path = request.get_full_path()
-    url = '%s?%s=%s' % (login_url, REDIRECT_FIELD_NAME, urlquote(path))
-    return HttpResponseRedirect(url)
+    login_url_parts = list(urlparse.urlparse(login_url))
+    if redirect_field_name:
+        querystring = SafeQueryDict(login_url_parts[4], mutable=True)
+        querystring[redirect_field_name] = path
+        login_url_parts[4] = querystring.urlencode(safe='/')
+    return HttpResponseRedirect(urlparse.urlunparse(login_url_parts))
 
 def openid_is_authorized(request, identity_url, trust_root):
     """
