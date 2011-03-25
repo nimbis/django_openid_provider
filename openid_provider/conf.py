@@ -13,5 +13,5 @@ FILESTORE_PATH = getattr(settings, 'OPENID_PROVIDER_FILESTORE_PATH',
 SREG_DATA_CALLBACK = getattr(settings, 'OPENID_PROVIDER_SREG_DATA_CALLBACK',
                              'openid_provder.utils.get_default_sreg_data')
 
-AX_DATA_CALLBACK = getattr(setting, 'OPENID_PROVIDER_AX_DATA_CALLBACK',
+AX_DATA_CALLBACK = getattr(settings, 'OPENID_PROVIDER_AX_DATA_CALLBACK',
                            'openid_provder.utils.get_default_ax_data')
