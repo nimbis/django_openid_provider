@@ -27,7 +27,7 @@ from openid.server.trustroot import verifyReturnTo
 from openid.yadis.discover import DiscoveryFailure
 from openid.yadis.constants import YADIS_CONTENT_TYPE
 
-from openid_provider.utils import add_sreg_data, get_store
+from openid_provider.utils import add_sreg_data, add_ax_data, get_store
 
 @csrf_exempt
 def openid_server(request):
@@ -76,6 +76,7 @@ def openid_server(request):
         oresponse = server.handleRequest(orequest)
     if request.user.is_authenticated():
         add_sreg_data(request, orequest, oresponse)
+        add_ax_data(request, orequest, oresponse)
     # Convert a webresponse from the OpenID library in to a Django HttpResponse
     webresponse = server.encodeResponse(oresponse)
     response = HttpResponse(webresponse.body)

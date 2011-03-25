@@ -8,6 +8,7 @@ tip
 * Fixed landing page view to handle redirect URL GET params correctly.
 * Added setting OPENID_SREG_DATA_CALLBACK setting for custom SREG callback
   functions.
+* Added AX support, new OPENID_AX_DATA_CALLBACK callback.
 
 v0.4
 ----
