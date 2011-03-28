@@ -46,7 +46,7 @@ def add_ax_data(request, orequest, oresponse):
     ax_resp = ax.FetchResponse(ax_req)
     for attr in ax_req.getRequiredAttrs():
         ax_resp.addValue(attr, ax_data.get(attr))
-    oresponse.addExtension(sreg_resp)
+    oresponse.addExtension(ax_resp)
 
 def get_sreg_callback():
     try:
