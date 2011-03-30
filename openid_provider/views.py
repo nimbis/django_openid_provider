@@ -79,10 +79,15 @@ def openid_server(request):
         add_ax_data(request, orequest, oresponse)
     # Convert a webresponse from the OpenID library in to a Django HttpResponse
     webresponse = server.encodeResponse(oresponse)
-    response = HttpResponse(webresponse.body)
-    response.status_code = webresponse.code
-    for key, value in webresponse.headers.items():
-        response[key] = value
+    if webresponse.code == 200:
+        response = render_to_response('openid_provider/response.html', {
+            'body': webresponse.body,
+        }, context_instance=RequestContext(request))
+    else:
+        response = HttpResponse(webresponse.body)
+        response.status_code = webresponse.code
+        for key, value in webresponse.headers.items():
+            response[key] = value
     return response
 
 def openid_xrds(request, identity=False, id=None):
