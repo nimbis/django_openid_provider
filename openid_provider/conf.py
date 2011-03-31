@@ -15,3 +15,5 @@ SREG_DATA_CALLBACK = getattr(settings, 'OPENID_PROVIDER_SREG_DATA_CALLBACK',
 
 AX_DATA_CALLBACK = getattr(settings, 'OPENID_PROVIDER_AX_DATA_CALLBACK',
                            'openid_provider.utils.get_default_ax_data')
+
+AX_EXTENSION = getattr(settings, 'OPENID_PROVIDER_AX_EXTENSION', False)

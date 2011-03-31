@@ -21,6 +21,7 @@ except ImportError:
 from django.contrib.auth import REDIRECT_FIELD_NAME
 
 from openid.consumer.discover import OPENID_IDP_2_0_TYPE, OPENID_2_0_TYPE
+from openid.extensions import sreg, ax
 from openid.fetchers import HTTPFetchingError
 from openid.server.server import Server
 from openid.server.trustroot import verifyReturnTo
@@ -76,7 +77,8 @@ def openid_server(request):
         oresponse = server.handleRequest(orequest)
     if request.user.is_authenticated():
         add_sreg_data(request, orequest, oresponse)
-        add_ax_data(request, orequest, oresponse)
+        if conf.AX_EXTENSION:
+            add_ax_data(request, orequest, oresponse)
     # Convert a webresponse from the OpenID library in to a Django HttpResponse
     webresponse = server.encodeResponse(oresponse)
     if webresponse.code == 200:
@@ -94,7 +96,9 @@ def openid_xrds(request, identity=False, id=None):
     if identity:
         types = [OPENID_2_0_TYPE]
     else:
-        types = [OPENID_IDP_2_0_TYPE]
+        types = [OPENID_IDP_2_0_TYPE, sreg.ns_uri]
+        if conf.AX_EXTENSION:
+            types.append(ax.AXMessage.ns_uri)
     endpoints = [request.build_absolute_uri(reverse('openid-provider-root'))]
     return render_to_response('openid_provider/xrds.xml', {
         'host': request.build_absolute_uri('/'),
