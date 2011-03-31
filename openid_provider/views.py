@@ -28,6 +28,7 @@ from openid.server.trustroot import verifyReturnTo
 from openid.yadis.discover import DiscoveryFailure
 from openid.yadis.constants import YADIS_CONTENT_TYPE
 
+from openid_provider import conf
 from openid_provider.utils import add_sreg_data, add_ax_data, get_store
 
 @csrf_exempt
