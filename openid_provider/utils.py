@@ -44,7 +44,7 @@ def add_ax_data(request, orequest, oresponse):
     ax_data = callback(request, orequest)
     ax_req = ax.FetchRequest.fromOpenIDRequest(orequest)
     ax_resp = ax.FetchResponse(ax_req)
-    if ax_resp is not None:
+    if ax_req is not None:
         for attr in ax_req.getRequiredAttrs():
             ax_resp.addValue(attr, ax_data.get(attr))
     oresponse.addExtension(ax_resp)
