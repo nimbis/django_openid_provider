@@ -46,7 +46,9 @@ def add_ax_data(request, orequest, oresponse):
     ax_resp = ax.FetchResponse(ax_req)
     if ax_req is not None:
         for attr in ax_req.getRequiredAttrs():
-            ax_resp.addValue(attr, ax_data.get(attr))
+            value = ax_data.get(attr, None)
+            if value is not None:
+                ax_resp.addValue(attr, value)
     oresponse.addExtension(ax_resp)
 
 def get_sreg_callback():
