@@ -23,7 +23,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from openid.consumer.discover import OPENID_IDP_2_0_TYPE, OPENID_2_0_TYPE
 from openid.extensions import sreg, ax
 from openid.fetchers import HTTPFetchingError
-from openid.server.server import Server
+from openid.server.server import Server, BROWSER_REQUEST_MODES
 from openid.server.trustroot import verifyReturnTo
 from openid.yadis.discover import DiscoveryFailure
 from openid.yadis.constants import YADIS_CONTENT_TYPE
@@ -59,7 +59,7 @@ def openid_server(request):
                     reverse('openid-provider-xrds')),
             }, context_instance=RequestContext(request))
 
-    if orequest.mode in ("checkid_immediate", "checkid_setup"):
+    if orequest.mode in BROWSER_REQUEST_MODES:
         if not request.user.is_authenticated():
             return landing_page(request, orequest)
 
@@ -82,7 +82,7 @@ def openid_server(request):
             add_ax_data(request, orequest, oresponse)
     # Convert a webresponse from the OpenID library in to a Django HttpResponse
     webresponse = server.encodeResponse(oresponse)
-    if webresponse.code == 200:
+    if webresponse.code == 200 and orequest.mode in BROWSER_REQUEST_MODES:
         response = render_to_response('openid_provider/response.html', {
             'body': webresponse.body,
         }, context_instance=RequestContext(request))
