@@ -143,7 +143,7 @@ def openid_decide(request):
     }, context_instance=RequestContext(request))
 
 def error_page(request, msg):
-    return render_to_response('error.html', {
+    return render_to_response('openid_provider/error.html', {
         'title': _('Error'),
         'msg': msg,
     }, context_instance=RequestContext(request))
