@@ -32,14 +32,14 @@ html_file_suffix = '.html'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  (master_doc, 'openid_provider.tex', '%s Documentation' % project, _author, 'howto'), # 'manual' or 'howto'
+    (master_doc, 'openid_provider.tex', '%s Documentation' % project, _author, 'howto'), # 'manual' or 'howto'
 ]
 
 latex_elements = {
-	'papersize': 'a4',
-	'pointsize': '10pt',
-	'fncychap': '\\usepackage{fancyhdr}',
-	'preamble': '\\pagenumbering{arabic}'
+    'papersize': 'a4',
+    'pointsize': '10pt',
+    'fncychap': '\\usepackage{fancyhdr}',
+    'preamble': '\\pagenumbering{arabic}'
 }
 
 # The name of an image file (relative to this directory) to place at the top of
