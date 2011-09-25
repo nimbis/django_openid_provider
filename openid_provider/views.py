@@ -20,6 +20,7 @@ except ImportError:
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
 
+from openid.association import default_negotiator, encrypted_negotiator
 from openid.consumer.discover import OPENID_IDP_2_0_TYPE, OPENID_2_0_TYPE
 from openid.extensions import sreg, ax
 from openid.fetchers import HTTPFetchingError
@@ -39,6 +40,10 @@ def openid_server(request):
     """
     server = Server(get_store(request),
         op_endpoint=request.build_absolute_uri(reverse('openid-provider-root')))
+
+    if not request.is_secure():
+        # if request is not secure allow only encrypted association sessions (fixes #3)
+        server.negotiator = encrypted_negotiator
 
     # Clear AuthorizationInfo session var, if it is set
     if request.session.get('AuthorizationInfo', None):
