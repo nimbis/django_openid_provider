@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# vim: set ts=4 sw=4 fdm=indent : */
 # some code from http://www.djangosnippets.org/snippets/310/ by simon
 # and from examples/djopenid from python-openid-2.2.4
 import urlparse
+import logging
 from urllib import urlencode, quote
 
 from django.conf import settings
@@ -32,17 +32,21 @@ from openid.yadis.constants import YADIS_CONTENT_TYPE
 from openid_provider import conf
 from openid_provider.utils import add_sreg_data, add_ax_data, get_store
 
+logger = logging.getLogger(__name__)
+
 @csrf_exempt
 def openid_server(request):
     """
     This view is the actual OpenID server - running at the URL pointed to by 
     the <link rel="openid.server"> tag. 
     """
+    logger.debug('server request %s: %s',
+                 request.method, request.POST or request.GET)
     server = Server(get_store(request),
         op_endpoint=request.build_absolute_uri(reverse('openid-provider-root')))
 
     if not request.is_secure():
-        # if request is not secure allow only encrypted association sessions (fixes #3)
+        # if request is not secure allow only encrypted association sessions
         server.negotiator = encrypted_negotiator
 
     # Clear AuthorizationInfo session var, if it is set
@@ -58,26 +62,35 @@ def openid_server(request):
             del request.session['OPENID_REQUEST']
         else:
             # not request, render info page:
-            return render_to_response('openid_provider/server.html', {
+            data = {
                 'host': request.build_absolute_uri('/'),
                 'xrds_location': request.build_absolute_uri(
                     reverse('openid-provider-xrds')),
-            }, context_instance=RequestContext(request))
+            }
+            logger.debug('invalid request, sending info: %s', data)
+            return render_to_response('openid_provider/server.html',
+                                      data,
+                                      context_instance=RequestContext(request))
 
     if orequest.mode in BROWSER_REQUEST_MODES:
         if not request.user.is_authenticated():
+            logger.debug('no local authentication, sending landing page')
             return landing_page(request, orequest)
 
-        openid = openid_is_authorized(request, orequest.identity, orequest.trust_root)
+        openid = openid_is_authorized(request, orequest.identity,
+                                      orequest.trust_root)
 
         if openid is not None:
             id_url = request.build_absolute_uri(
                 reverse('openid-provider-identity', args=[openid.openid]))
             oresponse = orequest.answer(True, identity=id_url)
+            logger.debug('orequest.answer(True, identity="%s")', id_url)
         elif orequest.immediate:
+            logger.debug('checkid_immediate mode not supported')
             raise Exception('checkid_immediate mode not supported')
         else:
             request.session['OPENID_REQUEST'] = orequest
+            logger.debug('redirecting to decide page')
             return HttpResponseRedirect(reverse('openid-provider-decide'))
     else:
         oresponse = server.handleRequest(orequest)
@@ -91,11 +104,13 @@ def openid_server(request):
         response = render_to_response('openid_provider/response.html', {
             'body': webresponse.body,
         }, context_instance=RequestContext(request))
+        logger.debug('rendering browser response')
     else:
         response = HttpResponse(webresponse.body)
         response.status_code = webresponse.code
         for key, value in webresponse.headers.items():
             response[key] = value
+        logger.debug('rendering raw response')
     return response
 
 def openid_xrds(request, identity=False, id=None):
