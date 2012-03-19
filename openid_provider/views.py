@@ -143,24 +143,10 @@ def openid_decide(request):
     if openid is None:
         return error_page(request, "You are signed in but you don't have OpenID here!")
 
-    if request.method == 'POST' and request.POST.get('decide_page', False):
-        openid.trustedroot_set.create(trust_root=orequest.trust_root)
-        return HttpResponseRedirect(reverse('openid-provider-root'))
+    # We unconditionally allow access without prompting the user
+    openid.trustedroot_set.create(trust_root=orequest.trust_root)
+    return HttpResponseRedirect(reverse('openid-provider-root'))
 
-    # verify return_to of trust_root
-    try:
-        trust_root_valid = verifyReturnTo(orequest.trust_root, orequest.return_to) and "Valid" or "Invalid"
-    except HTTPFetchingError:
-        trust_root_valid = "Unreachable"
-    except DiscoveryFailure:
-        trust_root_valid = "DISCOVERY_FAILED"
-
-    return render_to_response('openid_provider/decide.html', {
-        'title': _('Trust this site?'),
-        'trust_root': orequest.trust_root,
-        'trust_root_valid': trust_root_valid,
-        'identity': orequest.identity,
-    }, context_instance=RequestContext(request))
 
 def error_page(request, msg):
     return render_to_response('openid_provider/error.html', {
