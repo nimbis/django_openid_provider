@@ -37,8 +37,8 @@ logger = logging.getLogger(__name__)
 @csrf_exempt
 def openid_server(request):
     """
-    This view is the actual OpenID server - running at the URL pointed to by 
-    the <link rel="openid.server"> tag. 
+    This view is the actual OpenID server - running at the URL pointed to by
+    the <link rel="openid.server"> tag.
     """
     logger.debug('server request %s: %s',
                  request.method, request.POST or request.GET)
@@ -67,10 +67,12 @@ def openid_server(request):
                 'xrds_location': request.build_absolute_uri(
                     reverse('openid-provider-xrds')),
             }
-            logger.debug('invalid request, sending info: %s', data)
-            return render_to_response('openid_provider/server.html',
-                                      data,
-                                      context_instance=RequestContext(request))
+            # Return empty string
+            return HttpResponse("", content_type="text/plain")
+#            logger.debug('invalid request, sending info: %s', data)
+#            return render_to_response('openid_provider/server.html',
+#                                      data,
+#                                      context_instance=RequestContext(request))
 
     if orequest.mode in BROWSER_REQUEST_MODES:
         if not request.user.is_authenticated():
@@ -176,7 +178,7 @@ class SafeQueryDict(QueryDict):
 def landing_page(request, orequest, login_url=None,
                  redirect_field_name=REDIRECT_FIELD_NAME):
     """
-    The page shown when the user attempts to sign in somewhere using OpenID 
+    The page shown when the user attempts to sign in somewhere using OpenID
     but is not authenticated with the site. For idproxy.net, a message telling
     them to log in manually is displayed.
     """
@@ -193,7 +195,7 @@ def landing_page(request, orequest, login_url=None,
 
 def openid_is_authorized(request, identity_url, trust_root):
     """
-    Check that they own the given identity URL, and that the trust_root is 
+    Check that they own the given identity URL, and that the trust_root is
     in their whitelist of trusted sites.
     """
     if not request.user.is_authenticated():
