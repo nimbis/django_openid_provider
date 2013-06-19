@@ -143,7 +143,10 @@ def openid_decide(request):
 
     openid = openid_get_identity(request, orequest.identity)
     if openid is None:
-        return error_page(request, "You are signed in but you don't have OpenID here!")
+        return error_page(request,
+            "A website tried to authenticate you using url %s, "
+            "but this url is not associated with your account." %
+            orequest.identity)
 
     # We unconditionally allow access without prompting the user
     openid.trustedroot_set.create(trust_root=orequest.trust_root)
