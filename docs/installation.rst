@@ -45,11 +45,26 @@ Basic Installation
         # ...
     )
 
-4. Run::
+4. To create required tables in your database, run::
 
     python manage.py syncdb
 
-   to create required tables to your database.
+   or (if you are using south)::
+
+    python manage.py migrate openid_provider
+
+
+=========
+Upgrading
+=========
+
+From <= 0.5
+-----------
+
+If you are using south you must fake initial migration::
+
+  python manage.py migrate openid_provider 0001 --fake
+
 
 
 ====================

@@ -2,7 +2,7 @@
 LICENSE
 =======
 
-Copyright (C) 2010 Roman Barczyński
+Copyright (C) 2014 Roman Barczyński
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this software except in compliance with the License.

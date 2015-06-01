@@ -1,10 +1,12 @@
 {% extends "openid_provider/base.html" %}
 
 {% block content %}
-{{ body|safe }}
+<div id="openid-body">
+  {{ body|safe }}
+</div>
 <script type="text/javascript">
   // the url is too long (> 2047) to be submitted via GET. It needs to be POSTed.
   // the should not require to click the "Continue"-Button, therefore we submit it via js
-  document.forms[0].submit();
+  document.getElementById('openid-body').getElementsByTagName('form')[0].submit();
 </script>
 {% endblock %}

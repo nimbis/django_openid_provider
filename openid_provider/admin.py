@@ -11,5 +11,7 @@ class TrustedRootInline(admin.TabularInline):
 class OpenIDAdmin(admin.ModelAdmin):
     list_display = ['openid', 'user', 'default']
     inlines = [TrustedRootInline, ]
-
+    raw_id_fields = ("user",)
+    search_fields = ('user__email',)
+    
 admin.site.register(OpenID, OpenIDAdmin)

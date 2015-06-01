@@ -2,7 +2,7 @@ Django OpenID Provider application acts as OpenID provider (in lame terms
 Server) for your `django.contrib.auth` accounts.
 
 See docs/ directory for documentation or browse it online at:
-http://www.romke.net/django/openid_provider/
+http://django-openid-provider.readthedocs.org/
 
 Check for new releases and report bugs at:
 http://bitbucket.org/romke/django_openid_provider/

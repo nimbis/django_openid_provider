@@ -2,13 +2,33 @@
 History
 =======
 
-tip
----
+v0.6
+----
+Released 2014-03-31.
 
+* When pressing "No" on decide page authentication is now cancelled as it
+  supposed to be, fixes :issue:`6`.
+* Added South migrations
+
+  .. warning:: you must fake initial migration if you already have
+     working openid_provider installation.
+* Django 1.6 compatibility (use openid toPostArgs/decodeRequest internal
+  serializer).
+
+v0.5
+----
+Released 2013-12-23.
+
+* Security enchancement:
+  `OpenID Authentication 2.0 9.2.1 <http://openid.net/specs/openid-authentication-2_0.html#rfc.section.9.2.1>`_
+  was implemented, fixes :issue:`4`.
 * Fixed landing page view to handle redirect URL GET params correctly.
-* Added setting OPENID_SREG_DATA_CALLBACK setting for custom SREG callback
+* Added OPENID_PROVIDER_SREG_DATA_CALLBACK setting for custom SREG callback
   functions.
-* Added AX support, new OPENID_AX_DATA_CALLBACK callback.
+* Added AX support, new OPENID_PROVIDER_AX_DATA_CALLBACK callback.
+* Added Django 1.5 support.
+* Added Django 1.5 custom user model support.
+* Fixed response page javascript to submit the correct form when there is more than one.
 
 v0.4
 ----
@@ -45,10 +65,8 @@ Credits
 
 Django OpenID Provider is developed by Roman Barczyński based on code from:
 
-- simon (`django code snippets`_)
+- simon (`django code snippets <http://www.djangosnippets.org/snippets/310/>`_)
 - python-openid-2.2.4 examples/djopenid
-
-.. _`django code snippets`: http://www.djangosnippets.org/snippets/310/
 
 
 Contributors

@@ -4,10 +4,11 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
-from django.contrib.auth.models import User
+from openid_provider.conf import AUTH_USER_MODEL
+from openid_provider.utils import get_username
 
 class OpenID(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(AUTH_USER_MODEL)
     openid = models.CharField(max_length=200, blank=True, unique=True)
     default = models.BooleanField(default=False)
 
@@ -17,14 +18,14 @@ class OpenID(models.Model):
         ordering = ['openid']
 
     def __unicode__(self):
-        return u"%s|%s" % (self.user.username, self.openid)
+        return u"%s|%s" % (get_username(self.user), self.openid)
 
     def save(self, *args, **kwargs):
         if self.openid in ['', u'', None]:
             from hashlib import sha1
             import random, base64
             sha = sha1()
-            sha.update(unicode(self.user.username).encode('utf-8'))
+            sha.update(unicode(get_username(self.user)).encode('utf-8'))
             sha.update(str(random.random()))
             value = str(base64.b64encode(sha.digest()))
             value = value.replace('/', '').replace('+', '').replace('=', '')
