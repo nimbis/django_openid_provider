@@ -2,6 +2,8 @@
 # some code from http://www.djangosnippets.org/snippets/310/ by simon
 # and from examples/djopenid from python-openid-2.2.4
 from hashlib import sha1
+from importlib import import_module
+
 from openid_provider import conf
 from openid.extensions import ax, sreg
 from openid.server.server import Server, BROWSER_REQUEST_MODES
@@ -13,7 +15,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
-from django.utils.importlib import import_module
 
 import logging
 
