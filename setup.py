@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "django_openid_provider",
-    version = "0.6",
+    version = "0.6+nimbis.1",
     author = u"Roman Barczyński",
     description = "An OpenID provider for your django.contrib.auth accounts",
     long_description = open("README.txt").read(),
